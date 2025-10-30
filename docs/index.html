@@ -1,0 +1,134 @@
+<head>
+	<title>PHUMA</title>
+	<meta property="og:title" content="PHUMA:">
+	<meta property="og:description" content="Physically-Grounded Humanoid Locomotion Dataset">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="./dataset/css/bulma.min.css">
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<script type="text/javascript">
+		function toggle(id) {
+			var e = document.getElementById(id);
+			if(e.style.display == 'block')
+				e.style.display = 'none';
+			else
+				e.style.display = 'block';
+		}
+	</script>
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+		});
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+</head>
+<div class="header" id="top">
+	<h1><span class="bold phuma">PHUMA </span><br/>Physically-Grounded Motion Retarget Dataset<br/>for Humanoid Imitation Learning</h1>
+	<table class="authors">
+		<tbody>
+			<tr>
+				<td>
+					<h4>
+						<a href="https://kyungminn.github.io" class="nobreak">Kyungmin Lee</a></sup>$\dagger$,&ensp;
+						<a href="https://sibisibi.github.io" class="nobreak">Sibeen Kim</a></sup>$\dagger$,&ensp;
+						<a href="https://pmh9960.github.io/">Minho Park</a>,&ensp;
+						<a href="https://mynsng.github.io/">Hyunseung Kim</a>,&ensp;
+						<a href="https://godnpeter.github.io/">Dongyoon Hwang</a>,&ensp;
+						<a href="https://joonleesky.github.io/">Hojoon Lee</a>,&ensp;
+						<a href="https://sites.google.com/site/jaegulchoo/">Jaegul Choo</a>.
+						
+						<div class="affiliations">
+							<br/>
+							KAIST
+						</div>
+						<br/>
+						<span class="authors-affiliation" style="font-size: 0.85em;">$\dagger$: Equal contribution</span>
+					</h4>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="links" style="margin-top: -20px;">
+		<a href="#TODO" class="btn"><i class="fa">&#xf1c1;</i>&ensp;Paper</a><a href="https://github.com/DAVIAN-Robotics/PHUMA" class="btn"><i class="fa fa-github"></i>&ensp;Code</a><a href="https://huggingface.co/datasets/DAVIAN-Robotics/PHUMA" class="btn"><i class="fa fa-database"></i>&ensp;Dataset</a>
+	</div>
+	<div class="content-video">
+		<video playsinline="" autoplay="" loop="" preload="" muted="" width="90%">
+			<source src="videos/PHUMA_main_with_voice.mp4" type="video/mp4">
+		</video>
+	</div>
+	
+</div>
+<div class="content">
+	<div class="hr"></div>
+	<div>
+		<h2>Abstract</h2>
+		<p class="abstract">
+			Motion imitation is a promising approach for humanoid locomotion, enabling agents to acquire humanlike behaviors. Existing methods typically rely on high-quality motion capture datasets such as AMASS, but these are scarce and expensive, limiting scalability and diversity. Recent studies attempt to scale data collection by converting large-scale internet videos, exemplified by Humanoid-X. However, they often introduce physical artifacts such as floating, penetration, and foot skating, which hinder stable imitation.
+In response, we introduce <span class="phuma">PHUMA</span>, a <span class="phuma">P</span>hysically-grounded <span class="phuma">HUMA</span>noid locomotion dataset that leverages human video at scale, while addressing physical artifacts through careful data curation and physics-constrained retargeting.
+PHUMA enforces joint limits, ensures ground contact, and eliminates foot skating, producing motions that are both large-scale and physically reliable.
+We evaluated <span class="phuma">PHUMA</span> in two sets of conditions: (i) imitation of unseen motion from self-recorded test videos and (ii) path following with pelvis-only guidance. In both cases, <span class="phuma">PHUMA</span>-trained policies outperform Humanoid-X and AMASS, achieving significant gains in imitating diverse motions.</span>.
+		</p>
+	</div>
+	<div class="hr"></div>
+	<div>
+		<h2>Overview</h2>
+		<div class="content" style="margin-top: -40px; text-align: center;">
+			<img src="images/overview.png" style="max-width: 90%; height: auto;" class="figure">
+		</div>
+		<p class="overview-caption" style="margin-top: -80px;">
+			Our four-stage pipeline for motion imitation learning includes: (1) Motion Curation, where we filter out problematic motions from a diverse dataset; (2) Motion Retargeting, where the filtered motions are retargeted to the humanoid using PhySINK, incorporating a series of losses.; (3) Policy Learning, where a policy is trained to imitate the retargeted motions; and (4) Inference, where the trained policy is used to control the humanoid, enabling it to imitate motions from unseen videos processed by a video-to-motion model.
+		</p>
+	</div>
+	<div class="hr"></div>
+	<div style="overflow: hidden">
+		<h2>Evaluation of Retargeting Methods</h2>
+		<p class="figure-caption">
+			The video below shows the example of retargeting results using different retargeting methods. Mink shows unnatural locomotion
+			patterns where the humanoid appears to walk on a tightrope, and SINK shows more human-like results, but still shows some floating and penetration. Our PhySINK shows not only remaining human-like, but also physically reliable motions.
+		</p>
+		<video playsinline="" autoplay="" loop="" preload="" muted="" width="99%">
+			<source src="videos/Retargeting_Methods_Evaluation.mp4" type="video/mp4">
+		</video>
+	</div>
+	<div class="hr"></div>
+	<div>
+		<h2>Imitation Performance</h2>
+		<p class="figure-caption">
+			In motion imitation tasks, our policy trained on <span class="phuma">PHUMA</span> outperforms the policy trained on existing datasets, including LAFAN1, AMASS, and Humanoid-X on both humanoids. We use MaskedMimic methods for training.
+		</p>
+		<div class="content" style="margin-top: -20px; text-align: center;">
+			<img src="images/imitation_performance.png" style="max-width: 90%; height: auto; " class="figure">
+		<div>
+	</div>
+	<div class="hr"></div>
+	<div>
+		<h2>Path Following Performance</h2>
+		<p class="figure-caption">
+			In path following tasks, our policy trained on <span class="phuma">PHUMA</span> outperforms the policy trained on AMASS. We also use MaskedMimic methods for training.
+		</p>
+		<div class="content" style="margin-top: -20px; text-align: center;">
+			<img src="images/path_following_performance.png" style="max-width: 90%; height: auto; " class="figure">
+		<div>
+	</div>
+	
+	<!-- <div class="hr"></div>
+	<div class="bibtex-container bibtex">
+		<h2 class="title">Citation</h2>
+		<p class="citation">
+		If you find our work useful, please consider citing the paper as follows:
+		</p>
+		<pre><code>@article{lee2025phuma,
+         title={PHUMA: Physically-Grounded Humanoid Locomotion Dataset}, 
+         author={Kyungmin Lee and Sibeen Kim and Minho Park and Hyunseung Kim and Dongyoon Hwang and Hojoon Lee and Jaegul Choo},
+         journal={arXiv preprint arXiv:2510.17881},
+         year={2025},
+}</code></pre>
+		</div> -->
+<footer>
+<a href="index.html#top"><i class="fa fa-arrow-up"></i><br/>Return to top</a>
+<div style="padding-top: 48px;">
+	<span>Website based on <a href="https://nicklashansen.github.io/td-mpc2">TD-MPC2</a>.</span>
+</div>
+</footer>

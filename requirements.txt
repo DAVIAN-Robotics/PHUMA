@@ -1,0 +1,13 @@
+torch==2.6.0
+numpy==1.26.4
+scipy==1.13.1
+PyYAML==6.0.2
+easydict==1.13
+tqdm==4.67.1
+smplx==0.1.28
+mujoco==3.3.0
+pytorch-kinematics==0.7.5
+pyrender==0.1.45
+trimesh==4.6.4
+opencv-python==4.11.0.86
+PyOpenGL>=3.1.0

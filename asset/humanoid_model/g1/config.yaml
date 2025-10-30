@@ -1,0 +1,151 @@
+root_pos: [0.0000, 0.0000, 0.7850]
+root_ori: [0.0000, 0.0000, 0.0000, 1.0000]
+dof_pos: [
+  -0.1500,  0.0000,  0.0000,
+   0.3000,
+  -0.1500,  0.0000,
+  
+  -0.1500,  0.0000,  0.0000,
+   0.3000,
+  -0.1500,  0.0000,
+  
+   0.0000,  0.0000,  0.0000,
+
+   0.0000,  1.5700,  0.0000,
+   1.5700,
+
+   0.0000, -1.5700,  0.0000,
+   1.5700]
+
+bone_mapping:
+  # Left Leg
+  - ['pelvis', 'left_hip', 'pelvis', 'left_hip_roll_link']
+  - ['left_hip', 'left_knee', 'left_hip_roll_link', 'left_knee_link'] 
+  - ['left_knee', 'left_ankle', 'left_knee_link', 'left_ankle_pitch_link']
+  # Right Leg
+  - ['pelvis', 'right_hip', 'pelvis', 'right_hip_roll_link']
+  - ['right_hip', 'right_knee', 'right_hip_roll_link', 'right_knee_link']
+  - ['right_knee', 'right_ankle', 'right_knee_link', 'right_ankle_pitch_link']
+  # Left Arm
+  - ['pelvis', 'left_shoulder', 'torso_link', 'left_shoulder_roll_link']
+  - ['left_shoulder', 'left_elbow', 'left_shoulder_roll_link', 'left_elbow_link']
+  - ['left_elbow', 'left_wrist', 'left_elbow_link', 'left_wrist_yaw_link']
+  # Right Arm
+  - ['pelvis', 'right_shoulder', 'torso_link', 'right_shoulder_roll_link']
+  - ['right_shoulder', 'right_elbow', 'right_shoulder_roll_link', 'right_elbow_link']
+  - ['right_elbow', 'right_wrist', 'right_elbow_link', 'right_wrist_yaw_link']
+
+keypoints:
+  - { name: 'pelvis',                 body: 'pelvis',                  }
+  - { name: 'left_hip_keypoint',      body: 'left_hip_roll_link',      }
+  - { name: 'left_knee_keypoint',     body: 'left_knee_link',          }
+  - { name: 'left_ankle_keypoint',    body: 'left_ankle_pitch_link',   }
+  - { name: 'left_heel_keypoint',     body: 'left_heel_keypoint',      }
+  - { name: 'left_toe_keypoint',      body: 'left_toe_keypoint',       }
+  - { name: 'right_hip_keypoint',     body: 'right_hip_roll_link',     }
+  - { name: 'right_knee_keypoint',    body: 'right_knee_link',         }
+  - { name: 'right_ankle_keypoint',   body: 'right_ankle_pitch_link',  }
+  - { name: 'right_heel_keypoint',    body: 'right_heel_keypoint',     }
+  - { name: 'right_toe_keypoint',     body: 'right_toe_keypoint',      }
+  - { name: 'torso_keypoint',         body: 'torso_link',              }
+  - { name: 'left_shoulder_keypoint', body: 'left_shoulder_roll_link', }
+  - { name: 'left_elbow_keypoint',    body: 'left_elbow_link',         }
+  - { name: 'left_wrist_keypoint',    body: 'left_wrist_yaw_link',     }
+  - { name: 'right_shoulder_keypoint',body: 'right_shoulder_roll_link',}
+  - { name: 'right_elbow_keypoint',   body: 'right_elbow_link',        }
+  - { name: 'right_wrist_keypoint',   body: 'right_wrist_yaw_link',    }
+
+body_names: [
+  'pelvis',
+
+  'left_hip_pitch_link', 'left_hip_roll_link', 'left_hip_yaw_link',
+  'left_knee_link',
+  'left_ankle_pitch_link', 'left_ankle_roll_link',
+  'left_heel_keypoint', 'left_toe_keypoint',
+
+  'right_hip_pitch_link', 'right_hip_roll_link', 'right_hip_yaw_link',
+  'right_knee_link',
+  'right_ankle_pitch_link', 'right_ankle_roll_link',
+  'right_heel_keypoint', 'right_toe_keypoint',
+
+  'waist_yaw_link', 'waist_roll_link', 'torso_link',
+
+  'left_shoulder_pitch_link', 'left_shoulder_roll_link', 'left_shoulder_yaw_link',
+  'left_elbow_link',
+  'left_wrist_roll_link', 'left_wrist_pitch_link', 'left_wrist_yaw_link',
+
+  'right_shoulder_pitch_link', 'right_shoulder_roll_link', 'right_shoulder_yaw_link',
+  'right_elbow_link',
+  'right_wrist_roll_link', 'right_wrist_pitch_link', 'right_wrist_yaw_link']
+
+joint_names: [
+  "floating_base_joint",
+
+  'left_hip_pitch_joint', 'left_hip_roll_joint', 'left_hip_yaw_joint',
+  'left_knee_joint',
+  'left_ankle_pitch_joint', 'left_ankle_roll_joint',
+
+  'right_hip_pitch_joint', 'right_hip_roll_joint', 'right_hip_yaw_joint',
+  'right_knee_joint',
+  'right_ankle_pitch_joint', 'right_ankle_roll_joint',
+
+  'waist_yaw_joint', 'waist_roll_joint', 'waist_pitch_joint',
+
+  'left_shoulder_pitch_joint', 'left_shoulder_roll_joint', 'left_shoulder_yaw_joint',
+  'left_elbow_joint',
+
+  'right_shoulder_pitch_joint', 'right_shoulder_roll_joint', 'right_shoulder_yaw_joint',
+  'right_elbow_joint']
+
+joint_limits: [
+  32, 20, 32,
+  20,
+  37, 37,
+  
+  32, 20, 32,
+  20,
+  37, 37,
+
+  32, 37, 37,
+  
+  37, 37, 37,
+  37,
+  
+  37, 37, 37,
+  37]
+
+joint_velocity_limits: [
+  32, 20, 32,
+  20,
+  37, 37,
+  
+  32, 20, 32,
+  20,
+  37, 37,
+
+  32, 37, 37,
+  
+  37, 37, 37,
+  37,
+  
+  37, 37, 37,
+  37]
+
+dof: [
+  2,
+  
+  1, 0, 2,
+  1,
+  1, 0,
+  
+  1, 0, 2,
+  1,
+  1, 0,
+  
+  2, 0, 1,
+  
+  1, 0, 2,
+  1,
+  
+  1, 0, 2,
+  1]

@@ -1,0 +1,45 @@
+<mujoco model="g1 scene">
+  <include file="custom.xml"/>
+
+  <statistic center="1.0 0.7 1.5" extent="0.8"/>
+
+  <visual>
+    <map force="0.1" fogend="20" fogstart="10" shadowclip="5" />
+    <headlight diffuse="0.3 0.3 0.3" ambient="0.3 0.3 0.3" specular="0.9 0.9 0.9"/>
+    <global offwidth="1280" offheight="960"
+            azimuth="-140" elevation="-20"/>
+    <quality shadowsize="16384"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.9176 0.9216 0.9294" rgb2="0.9176 0.9216 0.9294" width="100" height="100"/>
+    <texture builtin="checker" height="100" width="100" name="texplane" rgb1="0.7490 0.8392 0.8353" rgb2="0.7490 0.8392 0.8353" type="2d" mark="edge" markrgb="1 1 1"/>
+    <material name="MatPlane" reflectance="0.0" shininess="2" specular="1" texrepeat="120 120" texture="texplane"/>
+  </asset>
+
+  <worldbody>
+    <light pos="3.5 0 3.5" dir="-1 0 -1" directional="true"/>
+    <geom name="floor" size="30 20 0.05" type="plane" material="MatPlane"/> 
+  </worldbody>
+
+  <!-- <visual>
+    <map force="0.1" fogstart="5" fogend="25" shadowclip="10" />
+    <headlight diffuse="0.3 0.3 0.3" ambient="0.1 0.1 0.1" specular="0.0 0.0 0.0"/>
+    <global offwidth="1280" offheight="960"
+            azimuth="-140" elevation="-20"/>
+    <quality shadowsize="16384"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.90 0.92 0.98" rgb2="0.66 0.75 0.98" width="800" height="800"/>
+    <texture builtin="checker" height="512" width="512" name="texplane" rgb1="0.92 0.92 0.92" rgb2="0.98 0.98 0.98" type="2d" mark="edge" markrgb="0.85 0.85 0.85"/>
+    <material name="MatPlane" reflectance="0.0" shininess="0.0" specular="0.1" texrepeat="50 50" texture="texplane"/>
+    <material name="default_mat" specular="0.5" shininess="0.25" reflectance="0.1" rgba="0.7 0.7 0.7 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="1.5 1.5 5" dir="-0.5 -0.5 -1" directional="true" castshadow="true" ambient="0.1 0.1 0.1" diffuse="0.6 0.6 0.6" specular="0.3 0.3 0.3"/>    
+    <light pos="-3 0 4" dir="1 0 -0.5" directional="false" castshadow="false" ambient="0.25 0.25 0.25" diffuse="0.25 0.25 0.25" specular="0 0 0"/>    
+    <geom name="floor" size="30 20 0.05" type="plane" material="MatPlane"/>
+  </worldbody> -->
+</mujoco>
