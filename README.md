@@ -1,7 +1,6 @@
 # PHUMA: Physically-Grounded Humanoid Locomotion Dataset
 
 [![arXiv](https://img.shields.io/badge/arXiv-2510.26236-b31b1b.svg)](https://arxiv.org/abs/2510.26236)
-[![GitHub Code](https://img.shields.io/badge/Code-GitHub-black.svg?logo=github)](https://github.com/DAVIAN-Robotics/PHUMA)
 [![Project Page](https://img.shields.io/badge/Project_Page-Visit-blue.svg)](https://davian-robotics.github.io/PHUMA/)
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow)](https://huggingface.co/datasets/DAVIAN-Robotics/PHUMA)
 
