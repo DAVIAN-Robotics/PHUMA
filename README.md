@@ -1,32 +1,13 @@
 # PHUMA: Physically-Grounded Humanoid Locomotion Dataset
 
-<p align="center">
-  <a href="https://arxiv.org/abs/2510.26236">
-    <img src="https://img.shields.io/badge/arXiv-2510.26236-b31b1b.svg" alt="arXiv" />
-  </a>
-  <a href="https://davian-robotics.github.io/PHUMA/">
-    <img src="https://img.shields.io/badge/Project%20Page-Visit-blue" alt="Project Page" />
-  </a>
-  <a href="https://huggingface.co/datasets/DAVIAN-Robotics/PHUMA">
-    <img src="https://img.shields.io/badge/Hugging%20Face-Dataset-ffcc4d?logo=huggingface&logoColor=000" alt="Hugging Face Dataset" />
-  </a>
-</p>
+[![arXiv](https://img.shields.io/badge/arXiv-2510.26236-b31b1b.svg)](https://arxiv.org/abs/2510.26236)
+[![GitHub Code](https://img.shields.io/badge/Code-GitHub-black.svg?logo=github)](https://github.com/DAVIAN-Robotics/PHUMA)
+[![Project Page](https://img.shields.io/badge/Project_Page-Visit-blue.svg)](https://davian-robotics.github.io/PHUMA/)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue)](https://huggingface.co/datasets/DAVIAN-Robotics/PHUMA)
 
-<p align="center">
-  <a href="https://kyungminn.github.io">Kyungmin Lee</a>*,
-  <a href="https://sibisibi.github.io">Sibeen Kim</a>*,
-  <a href="https://pmh9960.github.io/">Minho Park</a>,
-  <a href="https://mynsng.github.io/">Hyunseung Kim</a>,
-  <a href="https://godnpeter.github.io/">Dongyoon Hwang</a>,
-  <a href="https://joonleesky.github.io/">Hojoon Lee</a>,
-  and <a href="https://sites.google.com/site/jaegulchoo/">Jaegul Choo</a>
-</p>
-
-<p align="center">
-  DAVIAN Robotics, KAIST AI<br/>
-  <sub>* indicates equal contribution</sub>
-  
-</p>
+> [Kyungmin Lee\*](https://kyungminn.github.io/), [Sibeen Kim\*](https://sibisibi.github.io/), [Minho Park](https://pmh9960.github.io/), [Hyunseung Kim](https://mynsng.github.io/), [Dongyoon Hwang](https://godnpeter.github.io/), [Hojoon Lee](https://joonleesky.github.io/), and [Jaegul Choo](https://sites.google.com/site/jaegulchoo/)
+> **DAVIAN Robotics, KAIST AI**  
+> arXiv 2025. (\* indicates equal contribution)
 
 PHUMA leverages large-scale human motion data while overcoming physical artifacts through careful data curation and physics-constrained retargeting to create a high-quality humanoid locomotion dataset.
 
