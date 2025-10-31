@@ -16,6 +16,68 @@
 			else
 				e.style.display = 'block';
 		}
+		
+		var carouselPositions = {};
+		
+		function initCarousel(carouselId) {
+			var wrapper = document.getElementById(carouselId);
+			var track = wrapper.querySelector('.carousel-track');
+			var items = track.querySelectorAll('.carousel-item');
+			var itemsPerView = 3;
+			
+			// CSS에서 이미 width를 설정했으므로 JavaScript에서는 transform만 조정
+			carouselPositions[carouselId] = 0;
+			track.style.transform = 'translateX(0%)';
+			updateCarouselButtons(carouselId, items.length, itemsPerView);
+		}
+		
+		function moveCarousel(carouselId, direction) {
+			var wrapper = document.getElementById(carouselId);
+			var track = wrapper.querySelector('.carousel-track');
+			var items = track.querySelectorAll('.carousel-item');
+			var itemsPerView = 3;
+			var maxPosition = items.length - itemsPerView;
+			
+			if (!carouselPositions.hasOwnProperty(carouselId)) {
+				carouselPositions[carouselId] = 0;
+			}
+			
+			carouselPositions[carouselId] += direction;
+			
+			if (carouselPositions[carouselId] < 0) {
+				carouselPositions[carouselId] = 0;
+			}
+			if (carouselPositions[carouselId] > maxPosition) {
+				carouselPositions[carouselId] = maxPosition;
+			}
+			
+			var translateX = -(carouselPositions[carouselId] * (100 / itemsPerView));
+			track.style.transform = 'translateX(' + translateX + '%)';
+			
+			updateCarouselButtons(carouselId, items.length, itemsPerView);
+		}
+		
+		function updateCarouselButtons(carouselId, totalItems, itemsPerView) {
+			var maxPosition = totalItems - itemsPerView;
+			var leftBtn = document.querySelector('#' + carouselId).parentElement.querySelector('.carousel-btn-left');
+			var rightBtn = document.querySelector('#' + carouselId).parentElement.querySelector('.carousel-btn-right');
+			
+			if (leftBtn) {
+				leftBtn.style.opacity = carouselPositions[carouselId] <= 0 ? '0.5' : '1';
+				leftBtn.style.pointerEvents = carouselPositions[carouselId] <= 0 ? 'none' : 'auto';
+			}
+			if (rightBtn) {
+				rightBtn.style.opacity = carouselPositions[carouselId] >= maxPosition ? '0.5' : '1';
+				rightBtn.style.pointerEvents = carouselPositions[carouselId] >= maxPosition ? 'none' : 'auto';
+			}
+		}
+		
+		window.addEventListener('DOMContentLoaded', function() {
+			initCarousel('stationary-carousel');
+			initCarousel('angular-carousel');
+			initCarousel('vertical-carousel');
+			initCarousel('horizontal-carousel');
+		});
 	</script>
 	<script type="text/x-mathjax-config">
 		MathJax.Hub.Config({
@@ -55,11 +117,262 @@
 		<a href="https://arxiv.org/abs/2510.26236" class="btn"><i class="fa">&#xf1c1;</i>&ensp;Paper</a><a href="https://github.com/davian-robotics/PHUMA" class="btn"><i class="fa fa-github"></i>&ensp;Code</a><a href="https://huggingface.co/datasets/DAVIAN-Robotics/PHUMA" class="btn"><i class="fa fa-database"></i>&ensp;Dataset</a>
 	</div>
 	<div class="content-video">
-		<video playsinline="" autoplay="" loop="" preload="" muted="" width="90%" controls>
+		<video playsinline="" autoplay="" loop="" preload="" muted="" controls>
 			<source src="videos/PHUMA_main_with_voice.mp4" type="video/mp4">
 		</video>
 	</div>
 	
+</div>
+<div class="content">
+	<div class="hr"></div>
+	<h2>PHUMA Examples</h2>
+	<div class="carousel-section">
+		<h3 style="text-align: center; margin-bottom: 8px; color: rgb(54, 54, 54);">Stationary</h3>
+		<div class="carousel-container">
+			<button class="carousel-btn carousel-btn-left" onclick="moveCarousel('stationary-carousel', -1)">&#8249;</button>
+			<div class="carousel-wrapper" id="stationary-carousel">
+				<div class="carousel-track">
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/000048_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/000731_chunk_0002.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/001571_chunk_0002.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/004221_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/006503_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/007517_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/007989_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/008444_chunk_0002.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/009054_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/stationary/011993_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+				</div>
+			</div>
+			<button class="carousel-btn carousel-btn-right" onclick="moveCarousel('stationary-carousel', 1)">&#8250;</button>
+		</div>
+	</div>
+
+	<div class="carousel-section">
+		<h3 style="text-align: center; margin-bottom: 8px; color: rgb(54, 54, 54);">Angular</h3>
+		<div class="carousel-container">
+			<button class="carousel-btn carousel-btn-left" onclick="moveCarousel('angular-carousel', -1)">&#8249;</button>
+			<div class="carousel-wrapper" id="angular-carousel">
+				<div class="carousel-track">
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/000617_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/001650_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/002443_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/002946_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/003102_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/009529_chunk_0002.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/010414_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/012209_chunk_0002.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/013071_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/angular/013670_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+				</div>
+			</div>
+			<button class="carousel-btn carousel-btn-right" onclick="moveCarousel('angular-carousel', 1)">&#8250;</button>
+		</div>
+	</div>
+
+	<div class="carousel-section">
+		<h3 style="text-align: center; margin-bottom: 8px; color: rgb(54, 54, 54);">Vertical</h3>
+		<div class="carousel-container">
+			<button class="carousel-btn carousel-btn-left" onclick="moveCarousel('vertical-carousel', -1)">&#8249;</button>
+			<div class="carousel-wrapper" id="vertical-carousel">
+				<div class="carousel-track">
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/000523_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/002547_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/004303_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/006035_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/007826_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/010179_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/012056_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/012392_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/012853_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/vertical/014118_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+				</div>
+			</div>
+			<button class="carousel-btn carousel-btn-right" onclick="moveCarousel('vertical-carousel', 1)">&#8250;</button>
+		</div>
+	</div>
+
+	<div class="carousel-section">
+		<h3 style="text-align: center; margin-bottom: 8px; color: rgb(54, 54, 54);">Horizontal</h3>
+		<div class="carousel-container">
+			<button class="carousel-btn carousel-btn-left" onclick="moveCarousel('horizontal-carousel', -1)">&#8249;</button>
+			<div class="carousel-wrapper" id="horizontal-carousel">
+				<div class="carousel-track">
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/001652_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/006270_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/006379_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/006465_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/006693_chunk_0002.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/007649_chunk_0002.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/008088_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/008271_chunk_0000.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/010823_chunk_0002.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="carousel-item">
+						<video playsinline="" autoplay="" loop="" preload="" muted="">
+							<source src="videos/horizontal/011610_chunk_0001.mp4" type="video/mp4">
+						</video>
+					</div>
+				</div>
+			</div>
+			<button class="carousel-btn carousel-btn-right" onclick="moveCarousel('horizontal-carousel', 1)">&#8250;</button>
+		</div>
+	</div>
 </div>
 <div class="content">
 	<div class="hr"></div>
