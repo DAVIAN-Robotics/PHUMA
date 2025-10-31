@@ -109,3 +109,16 @@ LAFAN1 Retargeted Data: Available [here](https://huggingface.co/datasets/lvhaido
 LocoMuJoCo Retargeted Data: Available [here](https://github.com/robfiras/loco-mujoco).
 
 For motion tracking and path following tasks, we utilize the codebase from [MaskedMimic](https://github.com/NVlabs/ProtoMotions).
+
+## 📝 Citation
+
+If you use this dataset or code in your research, please cite our paper:
+
+```bibtex
+@article{lee2025phuma,
+  title={PHUMA: Physically-Grounded Humanoid Locomotion Dataset},
+  author={Kyungmin Lee and Sibeen Kim and Minho Park and Hyunseung Kim and Dongyoon Hwang and Hojoon Lee and Jaegul Choo},
+  journal={arXiv preprint arXiv:2510.26236},
+  year={2025},
+}
+```
