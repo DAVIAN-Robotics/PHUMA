@@ -119,6 +119,20 @@ LocoMuJoCo Retargeted Data: Available [here](https://github.com/robfiras/loco-mu
 
 For motion tracking and path following tasks, we utilize the codebase from [MaskedMimic](https://github.com/NVlabs/ProtoMotions).
 
+## ❓ FAQ
+
+**Q: How can I obtain SMPL-X human pose files to reproduce either full or partial PHUMA dataset myself?**
+
+A: You can refer to the original [Humanoid-X repository](https://github.com/sihengz02/UH-1). For a more practical and straightforward option, we recommend referring to [Motion-X](https://github.com/IDEA-Research/Motion-X), which provides excellent documentation on SMPL-X pose data collection.
+
+**Q: Are you planning to release either the original or preprocessed SMPL-X human pose files?**
+
+A: Unfortunately, we cannot release human pose files of PHUMA Train/Test (`phuma_train.txt` and `phuma_test.txt`) due to license issues. For PHUMA Video (`unseen_video.txt`), we will release shortly!
+
+**Q: I want to process custom SMPL-X files with your code, but the orientation processing seems different.**
+
+A: For SMPL-X processing, we mainly follow the code of [Motion-X](https://github.com/IDEA-Research/Motion-X). Taking AMASS as example, we follow [this code](https://github.com/IDEA-Research/Motion-X/tree/main/mocap-dataset-process) (except face motion augmentation since we focus on locomotion).
+
 ## 📝 Citation
 
 If you use this dataset or code in your research, please cite our paper:
