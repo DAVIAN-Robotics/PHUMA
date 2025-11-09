@@ -16,6 +16,7 @@ def parse_args():
     parser.add_argument("--human_pose_file", required=True)
     parser.add_argument("--fps", type=int, default=30)
     parser.add_argument("--visualize", type=int, default=0)
+    parser.add_argument("--verbose", type=int, default=1)
     return parser.parse_args()
 
 def main(args):
@@ -68,7 +69,6 @@ def main(args):
     chunk_overlap = int(0.5 * args.fps)
     chunk_min_frames = int(1 * args.fps)
 
-    all_metrics = []
     start_frame = 0
     chunk_id = 0
 
@@ -88,13 +88,17 @@ def main(args):
 
         chunk_joints = joints[start_frame:end_frame].copy()
 
+        is_valid = True
+
         # Foot Contact Score
         foot_contact_score = np.max(chunk_data[:, 69:69+4], axis=-1).mean()
         if foot_contact_score <= 0.6:
-            print(f"[FILTER OUT] File: {chunk_file} - Foot contact score {foot_contact_score} is lower than 0.6.")
-            continue
+            if args.verbose:
+                print(f"[FILTER OUT] File: {chunk_file} - Foot contact score {foot_contact_score} is lower than 0.6.")
+            is_valid = False
         else:
-            print(f"[PASS] File: {chunk_file} - Foot contact score {foot_contact_score} is higher than 0.6.")
+            if args.verbose:
+                print(f"[PASS] File: {chunk_file} - Foot contact score {foot_contact_score} is higher than 0.6.")
 
         # Root Jerk
         velocity = np.diff(chunk_data[:, :3], axis=0) / dt
@@ -103,53 +107,64 @@ def main(args):
         jerk_magnitude = np.linalg.norm(jerk, axis=1)
         root_jerk = np.mean(jerk_magnitude)
         if root_jerk >= 50:
-            print(f"[FILTER OUT] File: {chunk_file} - Root jerk {root_jerk} is higher than 50.")
-            continue
+            if args.verbose:
+                print(f"[FILTER OUT] File: {chunk_file} - Root jerk {root_jerk} is higher than 50.")
+            is_valid = False
         else:
-            print(f"[PASS] File: {chunk_file} - Root jerk {root_jerk} is lower than 50.")
+            if args.verbose:
+                print(f"[PASS] File: {chunk_file} - Root jerk {root_jerk} is lower than 50.")
 
         # Pelvis Height
         min_pelvis_height = chunk_joints[:, 0, 1].min()
         if min_pelvis_height <= 0.6:
-            print(f"[FILTER OUT] File: {chunk_file} - Min pelvis height {min_pelvis_height} lower than 0.6.")
-            continue
+            if args.verbose:
+                print(f"[FILTER OUT] File: {chunk_file} - Min pelvis height {min_pelvis_height} lower than 0.6.")
+            is_valid = False
         else:
-            print(f"[PASS] File: {chunk_file} - Min pelvis height {min_pelvis_height} is higher than 0.6.")
+            if args.verbose:
+                print(f"[PASS] File: {chunk_file} - Min pelvis height {min_pelvis_height} is higher than 0.6.")
         max_pelvis_height = chunk_joints[:, 0, 1].max()
         if max_pelvis_height >= 1.5:
-            print(f"[FILTER OUT] File: {chunk_file} - Max pelvis height {max_pelvis_height} higher than 1.5.")
-            continue
+            if args.verbose:
+                print(f"[FILTER OUT] File: {chunk_file} - Max pelvis height {max_pelvis_height} higher than 1.5.")
+            is_valid = False
         else:
-            print(f"[PASS] File: {chunk_file} - Max pelvis height {max_pelvis_height} is lower than 1.5.")
+            if args.verbose:
+                print(f"[PASS] File: {chunk_file} - Max pelvis height {max_pelvis_height} is lower than 1.5.")
 
         # Distance to Base of Support
         pelvis_to_bos_distance = calculate_bos_distance(chunk_joints, target_joint_id=0)
         if pelvis_to_bos_distance >= 0.06:
-            print(f"[FILTER OUT] File: {chunk_file} - Pelvis to BoS distance {pelvis_to_bos_distance} exceeds 0.06.")
-            continue
+            if args.verbose:
+                print(f"[FILTER OUT] File: {chunk_file} - Pelvis to BoS distance {pelvis_to_bos_distance} exceeds 0.06.")
+            is_valid = False
         else:
-            print(f"[PASS] File: {chunk_file} - Pelvis to BoS distance {pelvis_to_bos_distance} is lower than 0.06.")
+            if args.verbose:
+                print(f"[PASS] File: {chunk_file} - Pelvis to BoS distance {pelvis_to_bos_distance} is lower than 0.06.")
         spine1_to_bos_distance = calculate_bos_distance(chunk_joints, target_joint_id=3)
         if spine1_to_bos_distance >= 0.11:
-            print(f"[FILTER OUT] File: {chunk_file} - Spine1 to BoS distance {spine1_to_bos_distance} exceeds 0.11.")
-            continue
+            if args.verbose:
+                print(f"[FILTER OUT] File: {chunk_file} - Spine1 to BoS distance {spine1_to_bos_distance} exceeds 0.11.")
+            is_valid = False
         else:
-            print(f"[PASS] File: {chunk_file} - Spine1 to BoS distance {spine1_to_bos_distance} is lower than 0.11.")
+            if args.verbose:
+                print(f"[PASS] File: {chunk_file} - Spine1 to BoS distance {spine1_to_bos_distance} is lower than 0.11.")
 
-        preprocessed_motion_file = join(args.project_dir, "data", "human_pose_preprocessed", f"{chunk_file}.npy")
-        os.makedirs(dirname(preprocessed_motion_file), exist_ok=True)
-        np.save(preprocessed_motion_file, chunk_data)
+        if is_valid:
+            preprocessed_motion_file = join(args.project_dir, "data", "human_pose_preprocessed", f"{chunk_file}.npy")
+            os.makedirs(dirname(preprocessed_motion_file), exist_ok=True)
+            np.save(preprocessed_motion_file, chunk_data)
 
-        chunk_motion_parms = {
-            'transl': torch.from_numpy(chunk_data[:, 0:3]).float().clone(),
-            'global_orient': torch.from_numpy(chunk_data[:, 3:6]).float().clone(),
-            'body_pose': torch.from_numpy(chunk_data[:, 6:69]).float().clone(),
-        }
+            chunk_motion_parms = {
+                'transl': torch.from_numpy(chunk_data[:, 0:3]).float().clone(),
+                'global_orient': torch.from_numpy(chunk_data[:, 3:6]).float().clone(),
+                'body_pose': torch.from_numpy(chunk_data[:, 6:69]).float().clone(),
+            }
 
-        if args.visualize > 0:
-            video_file = join(args.project_dir, "data", "video", "human_pose_preprocessed", f"{chunk_file}.mp4")
-            frames = render_smpl_pose(smpl, smpl_config, chunk_motion_parms)
-            write_video(video_file, frames, fps=args.fps)
+            if args.visualize > 0:
+                video_file = join(args.project_dir, "data", "video", "human_pose_preprocessed", f"{chunk_file}.mp4")
+                frames = render_smpl_pose(smpl, smpl_config, chunk_motion_parms)
+                write_video(video_file, frames, fps=args.fps)
 
         start_frame += (chunk_size - chunk_overlap)
         chunk_id += 1
