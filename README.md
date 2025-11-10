@@ -44,7 +44,26 @@ PHUMA leverages large-scale human motion data while overcoming physical artifact
 
 Our physics-aware curation pipeline filters out problematic motions from human motion data to ensure physical plausibility.
 
-**Starting Point:** We begin with the Humanoid-X collection as described in our paper. For more details, refer to the [Humanoid-X repository](https://github.com/sihengz02/UH-1).
+**Starting Point:** We begin with the Humanoid-X collection as described in our paper. For more details, refer to the [Humanoid-X repository](https://github.com/sihengz02/UH-1). If you want to reproduce the PHUMA dataset, a practical starting point is [Motion-X](https://github.com/IDEA-Research/Motion-X), which provides excellent documentation on SMPL-X pose data collection.
+
+**SMPL-X Data Format:** Motion-X produces SMPL-X data in (N, 322) format, but PHUMA requires (N, 69) format, focusing on body pose and excluding face, hands, etc. If you're processing Motion-X data, you need to convert it as follows:
+
+```python
+import numpy as np
+
+# Load Motion-X format (N, 322)
+human_pose_motionx = np.load('[REPLACE_WITH_YOUR_MOTION-X_HUMAN_POSE_FILE].npy')
+
+# Concatenate in the order expected by PHUMA: [transl, global_orient, body_pose]
+human_pose_phuma = np.concatenate([
+   human_pose_motionx[:, 309:309+3],  # transl: (N, 3)
+   human_pose_motionx[:, 0:0+3],      # global_orient: (N, 3)
+   human_pose_motionx[:, 3:3+63]      # body_pose: (N, 63)
+], axis=1)  # Shape: (N, 69)
+
+# Save in PHUMA format
+np.save('data/human_pose/[REPLACE_WITH_YOUR_HUMAN_POSE_FILE].npy', human_pose_phuma)
+```
 
 **Required SMPL-X Models:** Before running the curation pipeline, you need to download the SMPL-X model files:
 
@@ -73,6 +92,20 @@ python src/curation/preprocess_smplx.py \
 **Output:** 
 - Preprocessed motion chunks: `example/kick_chunk_0000.npy` and `example/kick_chunk_0001.npy` under `data/human_pose_preprocessed/`
 - If you set `--visualize 1`, will also save `example/kick_chunk_0000.mp4` and `example/kick_chunk_0001.mp4` under `data/video/human_pose_preprocessed/`
+
+**Tuning Curation Thresholds:**
+
+The default thresholds are tuned to preserve motions with airborne phases (e.g., jumping) while filtering out physically implausible motions. This means some motions in PHUMA may contain minor penetration or floating artifacts. If you need stricter filtering for specific locomotion types (e.g., walking only), you can adjust the thresholds:
+
+```bash
+python src/curation/preprocess_smplx.py \
+    --project_dir $PROJECT_DIR \
+    --human_pose_file $human_pose_file \
+    --foot_contact_threshold 0.8 \  # Default: 0.6. Increase to filter out more floating/penetration
+    --visualize 0
+```
+
+For a complete list of tunable parameters, see `src/curation/preprocess_smplx.py`.
 
 ### 2. Physics-Constrained Motion Retargeting
 
@@ -106,6 +139,8 @@ python src/retarget/motion_adaptation.py \
 - Retargeted humanoid motion data: `data/humanoid_pose/g1/example/kick_chunk_0000.npy`
 - If you set `--visualize 1`, will also save `data/video/humanoid_pose/example/kick_chunk_0000.mp4`
 
+**Custom Robot Support:** We support Unitree G1 and H1-2, but you can also retarget to custom humanoid robots. See our [Custom Robot Integration Guide](asset/humanoid_model/README.md) for details.
+
 ## 🎯 Motion Tracking and Evaluation
 
 To reproduce our reported quantitative results, use the provided data splits located in `data/split/`:
@@ -121,17 +156,21 @@ For motion tracking and path following tasks, we utilize the codebase from [Mask
 
 ## ❓ FAQ
 
-**Q: How can I obtain SMPL-X human pose files to reproduce either full or partial PHUMA dataset myself?**
-
-A: You can refer to the original [Humanoid-X repository](https://github.com/sihengz02/UH-1). For a more practical and straightforward option, we recommend referring to [Motion-X](https://github.com/IDEA-Research/Motion-X), which provides excellent documentation on SMPL-X pose data collection.
-
 **Q: Are you planning to release either the original or preprocessed SMPL-X human pose files?**
 
-A: Unfortunately, we cannot release human pose files of PHUMA Train/Test (`phuma_train.txt` and `phuma_test.txt`) due to license issues. For PHUMA Video (`unseen_video.txt`), we will release shortly!
+A: We have released the SMPL-X human pose files for PHUMA Video (`unseen_video.txt`). Unfortunately, we cannot release human pose files of PHUMA Train/Test (`phuma_train.txt` and `phuma_test.txt`) due to license issues.
 
 **Q: I want to process custom SMPL-X files with your code, but the orientation processing seems different.**
 
 A: For SMPL-X processing, we mainly follow the code of [Motion-X](https://github.com/IDEA-Research/Motion-X). Taking AMASS as example, we follow [this code](https://github.com/IDEA-Research/Motion-X/tree/main/mocap-dataset-process) (except face motion augmentation since we focus on locomotion).
+
+**Q: Some motions in PHUMA seem to have minor penetration or floating. Am I doing something wrong?**
+
+A: The default threshold values in the curation stage are tuned to preserve motions with airborne phases (e.g., jumping) while filtering out physically implausible motions. This trade-off means some motions may contain minor artifacts. If you need stricter filtering for specific locomotion types (e.g., walking only), you can adjust the curation thresholds such as `--foot_contact_threshold`. See the **Tuning Curation Thresholds** section for details.
+
+**Q: Can I retarget motions to custom humanoid robots using the PHUMA pipeline?**
+
+A: Yes! While PHUMA dataset is provided for Unitree G1 and H1-2, you can use our PhySINK retargeting pipeline with custom robots by following our [Custom Robot Integration Guide](asset/humanoid_model/README.md). The guide covers adding heel/toe keypoints, creating configuration files, and tuning the retargeting process for your robot.
 
 ## 📝 Citation
 

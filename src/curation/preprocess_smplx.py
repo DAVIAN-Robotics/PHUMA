@@ -17,6 +17,13 @@ def parse_args():
     parser.add_argument("--fps", type=int, default=30)
     parser.add_argument("--visualize", type=int, default=0)
     parser.add_argument("--verbose", type=int, default=1)
+
+    parser.add_argument("--foot_contact_threshold", type=float, default=0.6)
+    parser.add_argument("--root_jerk_threshold", type=float, default=50)
+    parser.add_argument("--min_pelvis_height_threshold", type=float, default=0.6)
+    parser.add_argument("--max_pelvis_height_threshold", type=float, default=1.5)
+    parser.add_argument("--pelvis_to_bos_distance_threshold", type=float, default=0.06)
+    parser.add_argument("--spine1_to_bos_distance_threshold", type=float, default=0.11)
     return parser.parse_args()
 
 def main(args):
@@ -92,13 +99,13 @@ def main(args):
 
         # Foot Contact Score
         foot_contact_score = np.max(chunk_data[:, 69:69+4], axis=-1).mean()
-        if foot_contact_score <= 0.6:
+        if foot_contact_score <= args.foot_contact_threshold:
             if args.verbose:
-                print(f"[FILTER OUT] File: {chunk_file} - Foot contact score {foot_contact_score} is lower than 0.6.")
+                print(f"[FILTER OUT] File: {chunk_file} - Foot contact score {foot_contact_score} is lower than {args.foot_contact_threshold}.")
             is_valid = False
         else:
             if args.verbose:
-                print(f"[PASS] File: {chunk_file} - Foot contact score {foot_contact_score} is higher than 0.6.")
+                print(f"[PASS] File: {chunk_file} - Foot contact score {foot_contact_score} is higher than {args.foot_contact_threshold}.")
 
         # Root Jerk
         velocity = np.diff(chunk_data[:, :3], axis=0) / dt
@@ -106,49 +113,49 @@ def main(args):
         jerk = np.diff(acceleration, axis=0) / dt
         jerk_magnitude = np.linalg.norm(jerk, axis=1)
         root_jerk = np.mean(jerk_magnitude)
-        if root_jerk >= 50:
+        if root_jerk >= args.root_jerk_threshold:
             if args.verbose:
-                print(f"[FILTER OUT] File: {chunk_file} - Root jerk {root_jerk} is higher than 50.")
+                print(f"[FILTER OUT] File: {chunk_file} - Root jerk {root_jerk} is higher than {args.root_jerk_threshold}.")
             is_valid = False
         else:
             if args.verbose:
-                print(f"[PASS] File: {chunk_file} - Root jerk {root_jerk} is lower than 50.")
+                print(f"[PASS] File: {chunk_file} - Root jerk {root_jerk} is lower than {args.root_jerk_threshold}.")
 
         # Pelvis Height
         min_pelvis_height = chunk_joints[:, 0, 1].min()
-        if min_pelvis_height <= 0.6:
+        if min_pelvis_height <= args.min_pelvis_height_threshold:
             if args.verbose:
-                print(f"[FILTER OUT] File: {chunk_file} - Min pelvis height {min_pelvis_height} lower than 0.6.")
+                print(f"[FILTER OUT] File: {chunk_file} - Min pelvis height {min_pelvis_height} lower than {args.min_pelvis_height_threshold}.")
             is_valid = False
         else:
             if args.verbose:
-                print(f"[PASS] File: {chunk_file} - Min pelvis height {min_pelvis_height} is higher than 0.6.")
+                print(f"[PASS] File: {chunk_file} - Min pelvis height {min_pelvis_height} is higher than {args.min_pelvis_height_threshold}.")
         max_pelvis_height = chunk_joints[:, 0, 1].max()
-        if max_pelvis_height >= 1.5:
+        if max_pelvis_height >= args.max_pelvis_height_threshold:
             if args.verbose:
-                print(f"[FILTER OUT] File: {chunk_file} - Max pelvis height {max_pelvis_height} higher than 1.5.")
+                print(f"[FILTER OUT] File: {chunk_file} - Max pelvis height {max_pelvis_height} higher than {args.max_pelvis_height_threshold}.")
             is_valid = False
         else:
             if args.verbose:
-                print(f"[PASS] File: {chunk_file} - Max pelvis height {max_pelvis_height} is lower than 1.5.")
+                print(f"[PASS] File: {chunk_file} - Max pelvis height {max_pelvis_height} is lower than {args.max_pelvis_height_threshold}.")
 
         # Distance to Base of Support
         pelvis_to_bos_distance = calculate_bos_distance(chunk_joints, target_joint_id=0)
-        if pelvis_to_bos_distance >= 0.06:
+        if pelvis_to_bos_distance >= args.pelvis_to_bos_distance_threshold:
             if args.verbose:
-                print(f"[FILTER OUT] File: {chunk_file} - Pelvis to BoS distance {pelvis_to_bos_distance} exceeds 0.06.")
+                print(f"[FILTER OUT] File: {chunk_file} - Pelvis to BoS distance {pelvis_to_bos_distance} exceeds {args.pelvis_to_bos_distance_threshold}.")
             is_valid = False
         else:
             if args.verbose:
-                print(f"[PASS] File: {chunk_file} - Pelvis to BoS distance {pelvis_to_bos_distance} is lower than 0.06.")
+                print(f"[PASS] File: {chunk_file} - Pelvis to BoS distance {pelvis_to_bos_distance} is lower than {args.pelvis_to_bos_distance_threshold}.")
         spine1_to_bos_distance = calculate_bos_distance(chunk_joints, target_joint_id=3)
-        if spine1_to_bos_distance >= 0.11:
+        if spine1_to_bos_distance >= args.spine1_to_bos_distance_threshold:
             if args.verbose:
-                print(f"[FILTER OUT] File: {chunk_file} - Spine1 to BoS distance {spine1_to_bos_distance} exceeds 0.11.")
+                print(f"[FILTER OUT] File: {chunk_file} - Spine1 to BoS distance {spine1_to_bos_distance} exceeds {args.spine1_to_bos_distance_threshold}.")
             is_valid = False
         else:
             if args.verbose:
-                print(f"[PASS] File: {chunk_file} - Spine1 to BoS distance {spine1_to_bos_distance} is lower than 0.11.")
+                print(f"[PASS] File: {chunk_file} - Spine1 to BoS distance {spine1_to_bos_distance} is lower than {args.spine1_to_bos_distance_threshold}.")
 
         if is_valid:
             preprocessed_motion_file = join(args.project_dir, "data", "human_pose_preprocessed", f"{chunk_file}.npy")
