@@ -97,29 +97,12 @@ joint_names: [
   'right_shoulder_pitch_joint', 'right_shoulder_roll_joint', 'right_shoulder_yaw_joint',
   'right_elbow_joint']
 
-joint_limits: [
-  32, 20, 32,
-  20,
-  37, 37,
-  
-  32, 20, 32,
-  20,
-  37, 37,
-
-  32, 37, 37,
-  
-  37, 37, 37,
-  37,
-  
-  37, 37, 37,
-  37]
-
 joint_velocity_limits: [
-  32, 20, 32,
+  32, 32, 32,
   20,
   37, 37,
   
-  32, 20, 32,
+  32, 32, 32,
   20,
   37, 37,
 
