@@ -141,6 +141,46 @@ python src/retarget/motion_adaptation.py \
 
 **Custom Robot Support:** We support Unitree G1 and H1-2, but you can also retarget to custom humanoid robots. See our [Custom Robot Integration Guide](asset/humanoid_model/README.md) for details.
 
+**Degrees of Freedom (DoF) Clarification:**
+
+Our retargeting pipeline produces:
+- **G1:** 23 DoF (without wrist joints)
+- **H1-2:** 27 DoF (with wrist joints)
+
+In many cases, researchers tend to either exclude or include wrist joints for their purposes. Thus, the PHUMA dataset on HuggingFace provides:
+- **G1:** 29 DoF (23 DoF with zero-padded wrist joints)
+- **H1-2:** 27 DoF (with wrist joints)
+
+The G1 data is zero-padded as follows:
+
+```python
+import numpy as np
+
+N = dof_pos.shape[0]
+dof_pos = np.concatenate([
+    dof_pos[:, :19], 
+    np.zeros((N, 3)),  # Left wrist padding
+    dof_pos[:, 19:23], 
+    np.zeros((N, 3))   # Right wrist padding
+], axis=1)  # G1 23 DoF to 29 DoF
+```
+
+If you need to exclude wrist joints, you can convert as follows:
+
+```python
+# G1: 29 DoF to 23 DoF (exclude wrists)
+dof_pos = np.concatenate([
+    dof_pos[:, :19], 
+    dof_pos[:, 22:26], 
+], axis=1)
+
+# H1-2: 27 DoF to 21 DoF (exclude wrists)
+dof_pos = np.concatenate([
+    dof_pos[:, :17], 
+    dof_pos[:, 20:24], 
+], axis=1)
+```
+
 ## 🎯 Motion Tracking and Evaluation
 
 To reproduce our reported quantitative results, use the provided data splits located in `data/split/`:
@@ -153,6 +193,8 @@ LAFAN1 Retargeted Data: Available [here](https://huggingface.co/datasets/lvhaido
 LocoMuJoCo Retargeted Data: Available [here](https://github.com/robfiras/loco-mujoco).
 
 For motion tracking and path following tasks, we utilize the codebase from [MaskedMimic](https://github.com/NVlabs/ProtoMotions).
+
+**Note:** Our experiments reported in the paper used G1 (29 DoF) and H1-2 (21 DoF, excluding wrist joints) in IsaacGym. We chose 29 DoF for G1 because MaskedMimic already supports this configuration, and 21 DoF for H1-2 by referring to existing H1 support in MaskedMimic.
 
 ## ❓ FAQ
 
@@ -171,6 +213,10 @@ A: The default threshold values in the curation stage are tuned to preserve moti
 **Q: Can I retarget motions to custom humanoid robots using the PHUMA pipeline?**
 
 A: Yes! While PHUMA dataset is provided for Unitree G1 and H1-2, you can use our PhySINK retargeting pipeline with custom robots by following our [Custom Robot Integration Guide](asset/humanoid_model/README.md). The guide covers adding heel/toe keypoints, creating configuration files, and tuning the retargeting process for your robot.
+
+**Q: What are the DoF configurations for G1 and H1-2 in the PHUMA dataset?**
+
+A: The HuggingFace dataset provides G1 (29 DoF) and H1-2 (27 DoF). Our retargeting pipeline originally produces G1 (23 DoF) and H1-2 (27 DoF), but G1 data is zero-padded to 29 DoF since researchers often choose to either include or exclude wrist joints for their purposes. Our paper experiments used G1 (29 DoF) and H1-2 (21 DoF, excluding wrists). See the **Degrees of Freedom (DoF) Clarification** section for conversion code between different DoF configurations.
 
 ## 📝 Citation
 
