@@ -223,8 +223,9 @@ LocoMuJoCo Retargeted Data: Available [here](https://github.com/robfiras/loco-mu
 
 For motion tracking and path following tasks, we utilize the codebase from [MaskedMimic](https://github.com/NVlabs/ProtoMotions).
 
-## ❓ FAQ
-
+## ❓ FAQ 
+<details>
+<summary> FAQ List </summary>
 **Q: Are you planning to release either the original or preprocessed human pose files?**
 
 A: Unfortunately, we cannot release human pose files of PHUMA Train/Test (`phuma_train.txt` and `phuma_test.txt`) due to license issues. However, we will release the SMPL human pose files for PHUMA Video (`unseen_video.txt`) soon! We haven't released them yet because our current codebase only supports SMPL-X. We will update the SMPL processing code soon and release the data at the same time.
@@ -240,6 +241,8 @@ A: The default threshold values in the curation stage are tuned to preserve moti
 **Q: Can I retarget motions to custom humanoid robots using the PHUMA pipeline?**
 
 A: Yes! While PHUMA dataset is provided for Unitree G1 and H1-2, you can use our PhySINK retargeting pipeline with custom robots by following our [Custom Robot Integration Guide](asset/humanoid_model/README.md). The guide covers adding heel/toe keypoints, creating configuration files, and tuning the retargeting process for your robot.
+
+</details>
 
 ## 📝 Citation
 
