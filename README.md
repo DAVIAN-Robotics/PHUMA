@@ -44,7 +44,8 @@ PHUMA leverages large-scale human motion data while overcoming physical artifact
 
 Our physics-aware curation pipeline filters out problematic motions from human motion data to ensure physical plausibility.
 
-**Starting Point:** We begin with the Humanoid-X collection as described in our paper. For more details, refer to the [Humanoid-X repository](https://github.com/sihengz02/UH-1). If you want to reproduce the PHUMA dataset, a practical starting point is [Motion-X](https://github.com/IDEA-Research/Motion-X), which provides excellent documentation on SMPL-X pose data collection.
+#### **1-1) Starting Point:** 
+We begin with the Humanoid-X collection as described in our paper. For more details, refer to the [Humanoid-X repository](https://github.com/sihengz02/UH-1). If you want to reproduce the PHUMA dataset, a practical starting point is [Motion-X](https://github.com/IDEA-Research/Motion-X), which provides excellent documentation on SMPL-X pose data collection.
 
 **SMPL-X Data Format:** Motion-X produces SMPL-X data in (N, 322) format, but PHUMA requires (N, 69) format, focusing on body pose and excluding face, hands, etc. If you're processing Motion-X data, you can convert it using our preprocessing script:
 
@@ -104,7 +105,7 @@ python src/curation/preprocess_smplx_folder.py \
 
 
 
-**Tuning Curation Thresholds:**
+#### **1-2) Tuning Curation Thresholds:**
 
 The default thresholds are tuned to preserve motions with airborne phases (e.g., jumping) while filtering out physically implausible motions. This means some motions in PHUMA may contain minor penetration or floating artifacts. If you need stricter filtering for specific locomotion types (e.g., walking only), you can adjust the thresholds:
 
@@ -122,7 +123,7 @@ For a complete list of tunable parameters, see `src/curation/preprocess_smplx.py
 
 To address artifacts introduced during the retargeting process, we employ **PhySINK**, our physics-constrained retargeting method that adapts curated human motion to humanoid robots while enforcing physical plausibility.
 
-**Shape Adaptation (One-time Setup):**
+#### **2-1) Shape Adaptation (One-time Setup):**
 ```bash
 # Find the SMPL-X shape that best fits a given humanoid robot
 # This process only needs to be done once and can be reused for all motion files
@@ -133,7 +134,7 @@ python src/retarget/shape_adaptation.py \
 
 **Output:** Shape parameters saved to `asset/humanoid_model/g1/betas.npy`
 
-**Motion Adaptation:**
+#### **2-2) Motion Adaptation:**
 
 This step retargets human motion to robot motion using PhySINK optimization. You can process either a single file or an entire folder.
 
