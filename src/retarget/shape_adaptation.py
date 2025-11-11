@@ -12,7 +12,29 @@ from smplx.joint_names import JOINT_NAMES
 
 import torch.nn.functional as F
 
-def scale_adaptation(args):
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--project_dir", type=str, required=True)
+    parser.add_argument("--robot_name", type=str, required=True)
+
+    parser.add_argument("--print_every", type=int, default=500)
+    parser.add_argument("--num_iter_beta", type=int, default=5001)
+    parser.add_argument("--lr_beta", type=float, default=0.01)
+    
+    parser.add_argument("--keypoint_matching_weight", type=float, default=2, help="Weight for keypoint matching loss")
+    parser.add_argument("--kinematic_loss_weight", type=float, default=1, help="Weight for kinematic loss (bone length + orientation)")
+    parser.add_argument("--scale_unit_loss_weight", type=float, default=0.001, help="Weight for scale unit loss")
+    parser.add_argument("--scale_symmetry_loss_weight", type=float, default=1, help="Weight for scale symmetry loss")
+    parser.add_argument("--ground_contact_loss_weight", type=float, default=10, help="Weight for ground contact loss")
+    
+    parser.add_argument("--num_betas", type=int, default=10, help="Number of SMPL shape parameters (default: 10)")
+    parser.add_argument("--beta_min", type=float, default=-5.0, help="Minimum value for beta clamping (default: -5.0)")
+    parser.add_argument("--beta_max", type=float, default=5.0, help="Maximum value for beta clamping (default: 5.0)")
+    parser.add_argument("--heel_offset", type=float, default=0.005, help="Heel offset in meters (default: 0.005m = 5mm)")
+
+    return parser.parse_args()
+
+def main(args):
     human_model_dir = join(args.project_dir, "asset", "human_model")
     robot_model_dir = join(args.project_dir, "asset", "humanoid_model", args.robot_name)
     
@@ -54,7 +76,7 @@ def scale_adaptation(args):
     smpl_body_names = [smpl_kp_map[name] for name in robot_keypoint_names]
     smpl_keypoint_indices = [smpl_joint_map[name] for name in smpl_body_names]
 
-    betas = torch.zeros((1, 10), requires_grad=True)
+    betas = torch.zeros((1, args.num_betas), requires_grad=True)
     offset = torch.zeros((1, 3), requires_grad=True)
 
     BONE_MAPPING = robot_config['bone_mapping']
@@ -111,7 +133,7 @@ def scale_adaptation(args):
         optimizer.zero_grad()
         
         with torch.no_grad():
-            betas.data.clamp_(-5, 5)
+            betas.data.clamp_(args.beta_min, args.beta_max)
             link_scales.clamp_(min=0.0) 
 
         output = smpl(betas=betas, body_pose=None)
@@ -144,14 +166,13 @@ def scale_adaptation(args):
         # Correct ground contact loss to use Z-up coordinates
         toe_indices = smpl_kp_config["left_toe_indices"] + smpl_kp_config["right_toe_indices"]
         heel_indices = smpl_kp_config["left_heel_indices"] + smpl_kp_config["right_heel_indices"]
-        heel_offset = 0.005 # 5 mm
 
         smpl_vertices_zup = vertices[0, :, [2, 0, 1]]
         smpl_vertices_zup = smpl_vertices_zup @ rot_180_z
         smpl_vertices_zup += offset
 
         toe_heights = smpl_vertices_zup[toe_indices, 2]
-        heel_heights = smpl_vertices_zup[heel_indices, 2] + heel_offset
+        heel_heights = smpl_vertices_zup[heel_indices, 2] + args.heel_offset
         ground_contact_heights = torch.cat([toe_heights, heel_heights], dim=0)
         loss_ground_contact = (torch.mean(ground_contact_heights))**2
 
@@ -188,20 +209,5 @@ def scale_adaptation(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--project_dir", type=str)
-    parser.add_argument("--robot_name", type=str, required=True)
-
-    parser.add_argument("--print_every", type=int, default=500)
-    parser.add_argument("--num_iter_beta", type=int, default=5001)
-    parser.add_argument("--lr_beta", type=float, default=0.01)
-    
-    parser.add_argument("--keypoint_matching_weight", type=float, default=2, help="Weight for keypoint matching loss")
-    parser.add_argument("--kinematic_loss_weight", type=float, default=1, help="Weight for kinematic loss (bone length + orientation)")
-    parser.add_argument("--scale_unit_loss_weight", type=float, default=0.001, help="Weight for scale unit loss")
-    parser.add_argument("--scale_symmetry_loss_weight", type=float, default=1, help="Weight for scale symmetry loss")
-    parser.add_argument("--ground_contact_loss_weight", type=float, default=10, help="Weight for ground contact loss")
-
-    args = parser.parse_args()
-
-    scale_adaptation(args)
+    args = parse_args()
+    main(args)

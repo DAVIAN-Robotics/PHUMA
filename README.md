@@ -46,24 +46,18 @@ Our physics-aware curation pipeline filters out problematic motions from human m
 
 **Starting Point:** We begin with the Humanoid-X collection as described in our paper. For more details, refer to the [Humanoid-X repository](https://github.com/sihengz02/UH-1). If you want to reproduce the PHUMA dataset, a practical starting point is [Motion-X](https://github.com/IDEA-Research/Motion-X), which provides excellent documentation on SMPL-X pose data collection.
 
-**SMPL-X Data Format:** Motion-X produces SMPL-X data in (N, 322) format, but PHUMA requires (N, 69) format, focusing on body pose and excluding face, hands, etc. If you're processing Motion-X data, you need to convert it as follows:
+**SMPL-X Data Format:** Motion-X produces SMPL-X data in (N, 322) format, but PHUMA requires (N, 69) format, focusing on body pose and excluding face, hands, etc. If you're processing Motion-X data, you can convert it using our preprocessing script:
 
-```python
-import numpy as np
-
-# Load Motion-X format (N, 322)
-human_pose_motionx = np.load('[REPLACE_WITH_YOUR_MOTION-X_HUMAN_POSE_FILE].npy')
-
-# Concatenate in the order expected by PHUMA: [transl, global_orient, body_pose]
-human_pose_phuma = np.concatenate([
-   human_pose_motionx[:, 309:309+3],  # transl: (N, 3)
-   human_pose_motionx[:, 0:0+3],      # global_orient: (N, 3)
-   human_pose_motionx[:, 3:3+63]      # body_pose: (N, 63)
-], axis=1)  # Shape: (N, 69)
-
-# Save in PHUMA format
-np.save('data/human_pose/[REPLACE_WITH_YOUR_HUMAN_POSE_FILE].npy', human_pose_phuma)
+```bash
+python src/curation/preprocess_motionx_format.py \
+    --human_pose_folder /path_to_motionx_folder/subfolder \ # motionx_folder_path/humanml
+    --output_dir data/human_pose
 ```
+
+This script will:
+- Recursively find all `.npy` files in the input folder
+- Convert Motion-X format (N, 322) to PHUMA format (N, 69) by extracting `[transl, global_orient, body_pose]`
+- Preserve the directory structure (e.g., `aist/subset_0008/`) in the output folder
 
 **Required SMPL-X Models:** Before running the curation pipeline, you need to download the SMPL-X model files:
 
@@ -75,11 +69,16 @@ np.save('data/human_pose/[REPLACE_WITH_YOUR_HUMAN_POSE_FILE].npy', human_pose_ph
 3. Place all downloaded files in the `asset/human_model/smplx/` directory
 
 **Example Usage:**
+
+
 ```bash
 # Set your project directory
 PROJECT_DIR="[REPLACE_WITH_YOUR_WORKING_DIRECTORY]/PHUMA"
 cd $PROJECT_DIR
+```
 
+- **For single file:**
+```bash
 # We provide an example clip: data/human_pose/example/kick.npy
 human_pose_file="example/kick"
 
@@ -89,9 +88,21 @@ python src/curation/preprocess_smplx.py \
     --visualize 0
 ```
 
+- **For folder:**
+```bash
+human_pose_folder='data/human_pose/example'
+
+python src/curation/preprocess_smplx_folder.py \
+    --project_dir $PROJECT_DIR \
+    --human_pose_folder $human_pose_folder \
+    --visualize 0 \
+```
+
 **Output:** 
 - Preprocessed motion chunks: `example/kick_chunk_0000.npy` and `example/kick_chunk_0001.npy` under `data/human_pose_preprocessed/`
 - If you set `--visualize 1`, will also save `example/kick_chunk_0000.mp4` and `example/kick_chunk_0001.mp4` under `data/video/human_pose_preprocessed/`
+
+
 
 **Tuning Curation Thresholds:**
 
@@ -123,6 +134,10 @@ python src/retarget/shape_adaptation.py \
 **Output:** Shape parameters saved to `asset/humanoid_model/g1/betas.npy`
 
 **Motion Adaptation:**
+
+This step retargets human motion to robot motion using PhySINK optimization. You can process either a single file or an entire folder.
+
+- **For single file:**
 ```bash
 # Using the curated data from the previous step for Unitree G1 humanoid robot
 
@@ -131,13 +146,41 @@ human_pose_preprocessed_file="example/kick_chunk_0000"
 python src/retarget/motion_adaptation.py \
     --project_dir $PROJECT_DIR \
     --robot_name g1 \
-    --human_pose_file $human_pose_preprocessed_file \
-    --visualize 0
+    --human_pose_file $human_pose_preprocessed_file
 ```
 
+- **For folder (with multiprocessing support):**
+```bash
+human_pose_preprocessed_folder="data/human_pose_preprocessed/example"
+
+python src/retarget/motion_adaptation_multiprocess.py \
+    --project_dir $PROJECT_DIR \
+    --robot_name g1 \
+    --human_pose_folder $human_pose_preprocessed_folder \
+    --gpu_ids 0,1,2,3 \
+    --processes_per_gpu 2
+```
+
+**Multiprocessing Parameters:**
+- `--gpu_ids`: Comma-separated GPU IDs (e.g., `0,1,2,3`). If not specified, uses `--device` (default: `cuda:0`).
+- `--processes_per_gpu`: Number of parallel processes per GPU (default: 1). 
+  - **Recommended**: 1-2 for RTX 3090 (24GB), 2-4 for A100 (40GB+)
+  - Total workers = `len(gpu_ids) × processes_per_gpu`
+  - Example: `--gpu_ids 0,1,2,3 --processes_per_gpu 2` → 8 workers total
+- `--num_workers`: Manual override for total number of workers (default: auto-calculated from GPU settings)
+  - Use `-1` to use all available CPU cores (for CPU-only processing)
+
+**Additional Options:**
+- `--visualize`: Set to `1` to generate visualization videos (default: `0`)
+- `--fps`: Frame rate for output videos (default: `30`)
+- `--num_iter_dof`: Number of optimization iterations (default: `3001`)
+- `--lr_dof`: Learning rate for DOF optimization (default: `0.005`)
+- See `python src/retarget/motion_adaptation_multiprocess.py --help` for all available options
+
 **Output:** 
-- Retargeted humanoid motion data: `data/humanoid_pose/g1/example/kick_chunk_0000.npy`
-- If you set `--visualize 1`, will also save `data/video/humanoid_pose/example/kick_chunk_0000.mp4`
+- Retargeted humanoid motion data: `data/humanoid_pose/g1/kick_chunk_0000.npy`
+  - Format: Dictionary containing `root_trans`, `root_ori`, `dof_pos`, and `fps`
+- If you set `--visualize 1`, will also save `data/video/humanoid_pose/g1/kick_chunk_0000.mp4`
 
 **Custom Robot Support:** We support Unitree G1 and H1-2, but you can also retarget to custom humanoid robots. See our [Custom Robot Integration Guide](asset/humanoid_model/README.md) for details.
 

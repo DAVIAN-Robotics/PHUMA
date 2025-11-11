@@ -131,7 +131,7 @@ def render_robot_pose(robot_dir, dof_pos, root_pos, root_ori):
     
     for i in range(num_frames):
         data.qpos = set_qpos(root_pos=root_pos[i], root_ori=root_ori[i], dof_pos=dof_pos[i])
-        mujoco.mj_step(robot, data)
+        mujoco.mj_forward(robot, data)
 
         renderer.update_scene(data, camera=camera, scene_option=scene_option)
         pixels = renderer.render()
