@@ -200,9 +200,9 @@ For motion tracking and path following tasks, we utilize the codebase from [Mask
 
 ## ❓ FAQ
 
-**Q: Are you planning to release either the original or preprocessed SMPL-X human pose files?**
+**Q: Are you planning to release either the original or preprocessed human pose files?**
 
-A: We have released the SMPL-X human pose files for PHUMA Video (`unseen_video.txt`). Unfortunately, we cannot release human pose files of PHUMA Train/Test (`phuma_train.txt` and `phuma_test.txt`) due to license issues.
+A: Unfortunately, we cannot release human pose files of PHUMA Train/Test (`phuma_train.txt` and `phuma_test.txt`) due to license issues. However, we will release the SMPL human pose files for PHUMA Video (`unseen_video.txt`) soon! We haven't released them yet because our current codebase only supports SMPL-X. We will update the SMPL processing code soon and release the data at the same time.
 
 **Q: I want to process custom SMPL-X files with your code, but the orientation processing seems different.**
 
