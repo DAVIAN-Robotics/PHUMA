@@ -47,7 +47,17 @@ Our physics-aware curation pipeline filters out problematic motions from human m
 #### **1-1) Starting Point:** 
 We begin with the Humanoid-X collection as described in our paper. For more details, refer to the [Humanoid-X repository](https://github.com/sihengz02/UH-1). If you want to reproduce the PHUMA dataset, a practical starting point is [Motion-X](https://github.com/IDEA-Research/Motion-X), which provides excellent documentation on SMPL-X pose data collection.
 
-**SMPL-X Data Format:** Motion-X produces SMPL-X data in (N, 322) format, but PHUMA requires (N, 69) format, focusing on body pose and excluding face, hands, etc. If you're processing Motion-X data, you can convert it using our preprocessing script:
+<details>
+<summary><strong>ⅰ) Preprocess SMPL-X Data Format</strong></summary>
+
+Motion-X produces SMPL-X data in (N, 322) format, but PHUMA requires (N, 69) format, focusing on body pose and excluding face, hands, etc. If you're processing Motion-X data, you can convert it using our preprocessing script:
+
+This script will:
+- Recursively find all `.npy` files in the input folder
+- Convert Motion-X format (N, 322) to PHUMA format (N, 69) by extracting `[transl, global_orient, body_pose]`
+- Preserve the directory structure (e.g., `aist/subset_0008/`) in the output folder
+
+</details>
 
 ```bash
 python src/curation/preprocess_motionx_format.py \
@@ -55,12 +65,10 @@ python src/curation/preprocess_motionx_format.py \
     --output_dir data/human_pose
 ```
 
-This script will:
-- Recursively find all `.npy` files in the input folder
-- Convert Motion-X format (N, 322) to PHUMA format (N, 69) by extracting `[transl, global_orient, body_pose]`
-- Preserve the directory structure (e.g., `aist/subset_0008/`) in the output folder
 
-**Required SMPL-X Models:** Before running the curation pipeline, you need to download the SMPL-X model files:
+<details>
+<summary><strong>ⅱ) Download SMPL-X Models</strong></summary>
+ Before running the curation pipeline, you need to download the SMPL-X model files:
 
 1. Visit [SMPL-X official website](https://smpl-x.is.tue.mpg.de/)
 2. Register and download the following files:
@@ -69,47 +77,25 @@ This script will:
    - `SMPLX_NEUTRAL.npz` and `SMPLX_NEUTRAL.pkl`
 3. Place all downloaded files in the `asset/human_model/smplx/` directory
 
-**Example Usage:**
+</details>
+
+#### **1-2) Tuning Curation Thresholds:**
 
 
+The default thresholds are tuned to preserve motions with airborne phases (e.g., jumping) while filtering out physically implausible motions. This means some motions in PHUMA may contain minor penetration or floating artifacts. If you need stricter filtering for specific locomotion types (e.g., walking only), you can adjust the thresholds:
+
+<details>
+<summary>Single File Version</summary>
+
+- **For single file:**
 ```bash
 # Set your project directory
 PROJECT_DIR="[REPLACE_WITH_YOUR_WORKING_DIRECTORY]/PHUMA"
 cd $PROJECT_DIR
-```
 
-- **For single file:**
-```bash
 # We provide an example clip: data/human_pose/example/kick.npy
 human_pose_file="example/kick"
 
-python src/curation/preprocess_smplx.py \
-    --project_dir $PROJECT_DIR \
-    --human_pose_file $human_pose_file \
-    --visualize 0
-```
-
-- **For folder:**
-```bash
-human_pose_folder='data/human_pose/example'
-
-python src/curation/preprocess_smplx_folder.py \
-    --project_dir $PROJECT_DIR \
-    --human_pose_folder $human_pose_folder \
-    --visualize 0 \
-```
-
-**Output:** 
-- Preprocessed motion chunks: `example/kick_chunk_0000.npy` and `example/kick_chunk_0001.npy` under `data/human_pose_preprocessed/`
-- If you set `--visualize 1`, will also save `example/kick_chunk_0000.mp4` and `example/kick_chunk_0001.mp4` under `data/video/human_pose_preprocessed/`
-
-
-
-#### **1-2) Tuning Curation Thresholds:**
-
-The default thresholds are tuned to preserve motions with airborne phases (e.g., jumping) while filtering out physically implausible motions. This means some motions in PHUMA may contain minor penetration or floating artifacts. If you need stricter filtering for specific locomotion types (e.g., walking only), you can adjust the thresholds:
-
-```bash
 python src/curation/preprocess_smplx.py \
     --project_dir $PROJECT_DIR \
     --human_pose_file $human_pose_file \
@@ -117,7 +103,32 @@ python src/curation/preprocess_smplx.py \
     --visualize 0
 ```
 
+
+- **For folder:**
+
+</details>
+
+```bash
+# Set your project directory
+PROJECT_DIR="[REPLACE_WITH_YOUR_WORKING_DIRECTORY]/PHUMA"
+cd $PROJECT_DIR
+
+human_pose_folder='data/human_pose/example'
+
+python src/curation/preprocess_smplx_folder.py \
+    --project_dir $PROJECT_DIR \
+    --human_pose_folder $human_pose_folder \
+    --foot_contact_threshold 0.8 \  # Default: 0.6. Increase to filter out more floating/penetration
+    --visualize 0 \
+```
+<details>
+<summary>Output Details</summary>
+
+- Preprocessed motion chunks: `example/kick_chunk_0000.npy` and `example/kick_chunk_0001.npy` under `data/human_pose_preprocessed/`
+- If you set `--visualize 1`, will also save `example/kick_chunk_0000.mp4` and `example/kick_chunk_0001.mp4` under `data/video/human_pose_preprocessed/`
+
 For a complete list of tunable parameters, see `src/curation/preprocess_smplx.py`.
+</details>
 
 ### 2. Physics-Constrained Motion Retargeting
 
@@ -138,7 +149,11 @@ python src/retarget/shape_adaptation.py \
 
 This step retargets human motion to robot motion using PhySINK optimization. You can process either a single file or an entire folder.
 
+<details>
+<summary>Single File Version</summary>
+
 - **For single file:**
+
 ```bash
 # Using the curated data from the previous step for Unitree G1 humanoid robot
 
@@ -151,6 +166,9 @@ python src/retarget/motion_adaptation.py \
 ```
 
 - **For folder (with multiprocessing support):**
+
+</details>
+
 ```bash
 human_pose_preprocessed_folder="data/human_pose_preprocessed/example"
 
@@ -161,6 +179,9 @@ python src/retarget/motion_adaptation_multiprocess.py \
     --gpu_ids 0,1,2,3 \
     --processes_per_gpu 2
 ```
+
+<details>
+<summary>Details</summary>
 
 **Multiprocessing Parameters:**
 - `--gpu_ids`: Comma-separated GPU IDs (e.g., `0,1,2,3`). If not specified, uses `--device` (default: `cuda:0`).
@@ -183,7 +204,11 @@ python src/retarget/motion_adaptation_multiprocess.py \
   - Format: Dictionary containing `root_trans`, `root_ori`, `dof_pos`, and `fps`
 - If you set `--visualize 1`, will also save `data/video/humanoid_pose/g1/kick_chunk_0000.mp4`
 
-**Custom Robot Support:** We support Unitree G1 and H1-2, but you can also retarget to custom humanoid robots. See our [Custom Robot Integration Guide](asset/humanoid_model/README.md) for details.
+</details>
+
+#### **✩ Custom Robot Support:** 
+
+We support Unitree G1 and H1-2, but you can also retarget to custom humanoid robots. See our [Custom Robot Integration Guide](asset/humanoid_model/README.md) for details.
 
 ## 🎯 Motion Tracking and Evaluation
 
