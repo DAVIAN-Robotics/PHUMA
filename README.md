@@ -4,15 +4,16 @@
 [![Project Page](https://img.shields.io/badge/Project_Page-Visit-blue.svg)](https://davian-robotics.github.io/PHUMA/)
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow)](https://huggingface.co/datasets/DAVIAN-Robotics/PHUMA)
 
-> [Kyungmin Lee\*](https://kyungminn.github.io/)<sup>1</sup>, [Sibeen Kim\*](https://sibisibi.github.io/)<sup>1</sup>, [Youngdo Lee](https://leeyngdo.github.io/)<sup>1,2</sup>, [Minho Park](https://pmh9960.github.io/)<sup>1</sup>, [Hyunseung Kim](https://mynsng.github.io/)<sup>1,2</sup>, [Dongyoon Hwang](https://godnpeter.github.io/)<sup>1</sup>, [Donghu Kim](https://i-am-proto.github.io/)<sup>1</sup>, [Hojoon Lee](https://joonleesky.github.io/)<sup>1</sup>, and [Jaegul Choo](https://sites.google.com/site/jaegulchoo/)<sup>1</sup>
+> [Kyungmin Lee\*](https://kyungminn.github.io/)<sup>1</sup>, [Sibeen Kim\*](https://sibisibi.github.io/)<sup>1</sup>, [Youngdo Lee](https://leeyngdo.github.io/)<sup>1,2</sup>, [Minho Park](https://pmh9960.github.io/)<sup>1</sup>, [Hyunseung Kim](https://mynsng.github.io/)<sup>1,2</sup>, [Dongyoon Hwang](https://godnpeter.github.io/)<sup>1</sup>, [Donghu Kim](https://i-am-proto.github.io/)<sup>1</sup>, [Hojoon Lee†](https://joonleesky.github.io/)<sup>1</sup>, and [Jaegul Choo†](https://sites.google.com/site/jaegulchoo/)<sup>1</sup>
 > 
 > <sup>1</sup>**DAVIAN Robotics, KAIST AI** &nbsp; <sup>2</sup>**KRAFTON**  
-> arXiv 2025. (\* indicates equal contribution)
+> **CoRL 2026 Spotlight** (\* equal contribution, † corresponding authors)
 
 PHUMA leverages large-scale human motion data while overcoming physical artifacts through careful data curation and physics-constrained retargeting to create a high-quality humanoid locomotion dataset.
 
 ## 📰 News
 
+- **[2026.09]** PHUMA has been accepted to **CoRL 2026** as a **Spotlight**! 🎉
 - **[2025.12]** PHUMA is now natively supported in NVIDIA's [ProtoMotions](https://github.com/NVlabs/ProtoMotions)! You can train policies directly on PHUMA — see the [PHUMA Data Preparation guide](https://github.com/NVlabs/ProtoMotions/blob/main/docs/source/getting_started/phuma_preparation.rst).
 
 ## 🚀 Quick Start
@@ -300,10 +301,10 @@ A: Yes! While PHUMA dataset is provided for Unitree G1 and H1-2, you can use our
 If you use this dataset or code in your research, please cite our paper:
 
 ```bibtex
-@article{lee2025phuma,
+@inproceedings{lee2026phuma,
   title={PHUMA: Physically Reliable Humanoid Locomotion Dataset},
   author={Kyungmin Lee and Sibeen Kim and Youngdo Lee and Minho Park and Hyunseung Kim and Dongyoon Hwang and Donghu Kim and Hojoon Lee and Jaegul Choo},
-  journal={arXiv preprint arXiv:2510.26236},
-  year={2025},
+  booktitle={Conference on Robot Learning (CoRL)},
+  year={2026},
 }
 ```
