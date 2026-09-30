@@ -4,9 +4,9 @@
 [![Project Page](https://img.shields.io/badge/Project_Page-Visit-blue.svg)](https://davian-robotics.github.io/PHUMA/)
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow)](https://huggingface.co/datasets/DAVIAN-Robotics/PHUMA)
 
-> [Kyungmin Lee\*](https://kyungminn.github.io/)<sup>1</sup>, [Sibeen Kim\*](https://sibisibi.github.io/)<sup>1</sup>, [Youngdo Lee](https://leeyngdo.github.io/)<sup>1,2</sup>, [Minho Park](https://pmh9960.github.io/)<sup>1</sup>, [Hyunseung Kim](https://mynsng.github.io/)<sup>1,2</sup>, [Dongyoon Hwang](https://godnpeter.github.io/)<sup>1</sup>, [Donghu Kim](https://i-am-proto.github.io/)<sup>1</sup>, [Hojoon Lee†](https://joonleesky.github.io/)<sup>1</sup>, [Jaegul Choo†](https://sites.google.com/site/jaegulchoo/)<sup>1</sup>
+> [Kyungmin Lee\*](https://kyungminn.github.io/)<sup>1</sup>, [Sibeen Kim\*](https://sibisibi.github.io/)<sup>1</sup>, [Youngdo Lee](https://leeyngdo.github.io/)<sup>2,3</sup>, [Minho Park](https://pmh9960.github.io/)<sup>1</sup>, [Hyunseung Kim](https://mynsng.github.io/)<sup>1,2</sup>, [Dongyoon Hwang](https://godnpeter.github.io/)<sup>1</sup>, [Donghu Kim](https://i-am-proto.github.io/)<sup>3</sup>, [Hojoon Lee†](https://joonleesky.github.io/)<sup>3</sup>, [Jaegul Choo†](https://sites.google.com/site/jaegulchoo/)<sup>1</sup>
 > 
-> <sup>1</sup>**DAVIAN Robotics, KAIST AI** &nbsp; <sup>2</sup>**KRAFTON**  
+> <sup>1</sup>**DAVIAN Robotics, KAIST AI** &nbsp; <sup>2</sup>**KRAFTON** &nbsp; <sup>3</sup>**Holiday Robotics**  
 > **CoRL 2026 Spotlight** (\* equal contribution, † corresponding authors)
 
 PHUMA leverages large-scale human motion data while overcoming physical artifacts through careful data curation and physics-constrained retargeting to create a high-quality humanoid locomotion dataset.
